@@ -1,0 +1,40 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Salon{% endblock title %}
+
+{% block content %}
+<div class="salon-hero d-flex flex-column justify-content-center align-items-center text-center text-white">
+    <div class="hero-text">
+        <h1 class="display-3 fw-bold mb-5">Welcome to The Salon</h1>
+        <p class="lead">Pellentesque at commodo ligula, sed luctus ante. Proin tempor, neque ut egestas pretium, metus turpis hendrerit urna, nec ullamcorper ex nisl accumsan velit. Suspendisse eget accumsan purus, a viverra orci. Praesent vehicula erat lectus, non ornare erat euismod ut. Vivamus ut nisi placerat, rutrum dui et, placerat mauris. Donec efficitur dolor eu nisl cursus, id varius ex varius. Phasellus molestie nulla malesuada rutrum dapibus. In commodo enim nec eros blandit sodales. Cras at turpis mattis, luctus tortor sed, lobortis risus. Donec sollicitudin magna sed tellus bibendum lacinia. Mauris accumsan nec odio eu eleifend. Phasellus pellentesque neque et turpis sollicitudin molestie. 
+        </p>
+        </div>
+</div>
+<div class="container py-5">
+    <div class="about-section text-center mb-5 py-5">
+        <h2 class="text-uppercase fw-semibold mb-4">About Us</h2>
+        <p class="text-muted fs-5">
+            The Salon is your go-to destination for professional beauty treatments. 
+            With years of experience and a passion for self-care, our team is committed to helping you look and feel your best.
+        </p>
+    </div>
+
+    <div class="contact-section text-center py-5">
+        <h2 class="text-uppercase fw-semibold mb-4">Contact Us</h2>
+        <p class="fs-5"><strong>Phone:</strong> +1 (123) 456-7890</p>
+        <p class="fs-5"><strong>Address:</strong> 123 Beauty Lane, Glamour City, GC 45678</p>
+    </div>
+</div>
+
+<style>
+.salon-hero {
+    background-color: #000;
+    min-height: 75vh;
+    padding: 100px 70px;
+    background-image: url('/static/img/header.jpg');
+}
+.hero-text h1, .hero-text p {
+    color: white;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,152 @@
+{% extends 'main/base.html' %}
+{% block title %}Salon Servicecs{% endblock title %}
+{% block content %}
+<h1 class="catalog-head text-uppercase" id="catalog-title">Services</h1>
+
+<div class="catalog d-flex">
+    <!-- sidebar -->
+    <form action="{% url 'main:catalog' %}" method="get" class="sidebar" id ="filter-form">
+            <a id="full-catalog" href="{% url 'main:catalog' %}">All Services</a>
+        <h4 class="price-head">Price range</h4>
+        <!-- set price range -->
+        <div class="price-range d-flex gap-2">        
+        <input class="price-input" type="number" name="min_price" id="min_price"
+            min="{{ lowest_price }}" max="{{ highest_price }}"
+            placeholder="Min Price" value="{{ request.GET.min_price }}"
+            oninput="debounceApplyFilters()">
+     
+        <input class="price-input" type="number" name="max_price" id="max_price"
+            min="{{ lowest_price }}" max="{{ highest_price }}"
+            placeholder="Max Price" value="{{ request.GET.max_price }}"
+            oninput="debounceApplyFilters()">
+     
+        </div>
+        
+        <h4 class="category-head">Categories</h4>
+        <!-- set CATEGORY filtration -->
+        {% for category in categories %}
+        <div class="category-option">
+            <!-- does this mean we can dynamically access categories in css? -->
+            <input type="checkbox" name="category" id="category-{{ category.slug }}" value="{{ category.slug }}"
+            {% if category.slug in selected_categories %}checked{% endif %}
+            onchange="applyFilters()">
+            <label for="category-{{ category.slug }}" class="d-flex">
+                <div class="category-name">{{ category.name }}</div>
+                <div class="category-count">{{ category.get_item_count }}</div>
+            </label>
+        </div>
+        {% endfor %}
+
+        <!-- set SELLER filtration -->
+        <h4 class="seller-head">Artists</h4>
+        {% for seller in sellers %}
+            <div class="category-option">   
+                <input type="checkbox" name="seller" id="seller-{{ seller.name }}" value="{{ seller.name }}"
+                {% if seller.name in selected_sellers %}checked{% endif %} onchange="applyFilters()">
+                <label for="seller-{{ seller.name }}">
+                    <div class="seller-name">    
+                    {{ seller.name }}
+                    </div>
+                </label>
+            </div>
+        {% endfor %}
+
+        <!-- set DISCOUNT filtration -->
+        <h4 class="discount-head">Discounts</h4>
+        {% for discount in discounts %}
+        <div class="category-option">
+            <input type="checkbox" name="discount" id="discount-{{ discount.slug }}" value="{{ discount.slug }}"
+            {% if discount.slug in selected_discounts %}checked{% endif %}
+             onchange="applyFilters()">
+            <label for="discount-{{ discount.slug }}">
+                <div class="discount-name">
+                {{ discount.name }}
+                </div>
+            </label>
+        </div>
+        {% endfor %}
+    </form>
+
+    <div class="product-list">
+        <div class="card-container d-flex flex-wrap">
+            {% for product in products %}
+            <div class="card">
+                <a href="{% url 'main:product_detail' product.slug %}" class="card-on-catalog">
+                    {% if product.image %}
+                        <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% endif %}
+                    <div class="card-info">
+                        <h5>{{ product.name }}</h5>
+                        {% comment %} <p>{{ product.current_price  }}$</p> {% endcomment %}
+
+                        {% comment %} NEW PRICE {% endcomment %}
+                        {% if product.current_price != product.price %}
+                        <div class="cart-discount d-flex gap-2">
+                            <p class="detail-price line">${{ product.price }}</p>
+                            <p class="detail-price price">${{ product.current_price }}</p>
+                        </div>
+                        {% else %}
+                            <p class="detail-price">
+                                ${{ product.current_price }}
+                            </p>
+                        {% endif %}
+
+
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p>No services</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<style>
+</style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            const checkboxes = document.querySelectorAll('.category-option input[type="checkbox"]');
+            const form = document.getElementById('filter-form');
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function(){
+                    form.submit();
+                });
+            });
+        });
+
+        let timeout;
+        function debounceApplyFilters(){
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                const form = document.getElementById('filter-form');
+                form.submit();
+            }, 1000);
+        }
+
+        function applyFilters(){
+            const form = document.getElementById('filter-form');
+            form.submit();
+            updateTitle();
+        }
+
+        function updateTitle() {
+            const checkboxes = document.querySelectorAll('input[name="category"]:checked');
+            const checkboxes_discount = document.querySelectorAll('input[name="discount"]:checked');
+
+            const titleElement = document.getElementById('catalog-title');
+
+            if (checkboxes.length > 0) {
+                const selectedCategories = Array.from(checkboxes).map(checkbox => {
+                    const categoryText = checkbox.nextElementSibling.textContent.trim();
+                    return categoryText;
+                });
+                titleElement.textContent = `${selectedCategories.join(', ')}`;
+            } else {
+                titleElement.textContent = 'Catalog';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateTitle);
+    </script>
+{% endblock content %}

@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock title %}</title>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="content-wrapper d-flex flex-column min-vh-100">
+        <header class="header sticky-top d-flex align-items-center">
+            <a class="header-logo" href="{% url 'main:home' %}">
+                Salon
+            </a>        
+            
+            <div class="header-nav d-flex gap-4">
+
+                <a class="artists-a" href="{% url 'main:artists' %}">
+                    Artists
+                </a>
+                
+                <a class="services-a" href="{% url 'main:catalog' %}">
+                    Services
+                </a>
+
+                <a href="{% url 'users:profile' %}" class="h-profile">
+                    Profile
+                </a>
+
+                <a href="{% url 'cart:cart_detail' %}" class="h-cart">
+                    Book Now
+                </a>
+                
+            </div>
+        </header>
+
+        <main class="container flex-grow-1">
+                {% block content %}
+                {% endblock content %}
+        </main>
+        
+        <footer class="footer d-flex align-items-center justify-content-center">
+            <p class="m-0">&copy; 2025 Salon</p>
+        </footer>
+    </div>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

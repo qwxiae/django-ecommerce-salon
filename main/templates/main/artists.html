@@ -1,0 +1,25 @@
+{% extends 'main/base.html' %}
+{% block title %}Salon Artists{% endblock title %}
+{% block content %}
+<h1 class="catalog-head text-uppercase" id="catalog-title">Artists</h1>
+
+<div class="catalog d-flex">
+    <div class="specialist-list">
+        <div class="card-container d-flex flex-wrap">
+            {% for specialist in specialists %}
+            <div class="card">
+                {% if specialist.image %}
+                    <img class="specialist-image" src="{{ specialist.image.url }}" alt="{{ specialist.name }}">
+                {% endif %}
+                <div class="card-info">
+                    <h5>{{ specialist.name }}</h5>
+                    <p>{{ specialist.description }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p>No artists</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

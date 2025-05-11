@@ -1,0 +1,12 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block title %}Order Success{% endblock title %}
+
+{% block content %}
+    <div class="success-order-page text-center">
+        <h2>Your orderd has been successfully processed.</h2>
+        <p>We will be in touch with you shortly.</p>
+        <a href="{% url 'main:catalog' %}">Back to catalogue</a>
+    </div>
+{% endblock content %}

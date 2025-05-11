@@ -1,0 +1,122 @@
+{% extends "main/base.html" %}
+{% block title %}
+Salon — {{ product.name }}
+{% endblock title %}
+
+{% block content %}
+<div class="detail-product d-flex">
+    <div class="detail-img d-flex justify-content-center">
+        <div class="image-box">
+            <!-- Main Product Image -->
+            {% if product.image %}
+                <img class="detail-image" style="display: block;" data-index="0" src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% endif %}
+
+            <!-- Additional Product Images -->
+            {% for image in product.product_image.all %}
+                <img class="detail-image" style="display: none;" data-index="{{ forloop.counter0|add:1 }}" src="{{ image.image.url }}" alt="{{ product.name }}">
+            {% endfor %}
+
+            <div class="image-nav">
+                <button class="prev-btn">&lsaquo;</button>
+                <button class="next-btn">&rsaquo;</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="detail-description">
+        <h2 class="text-uppercase product-title">{{ product.name }}</h2>
+        {% comment %} what does linebreaks mean {% endcomment %}
+        <h3 class="item-description">{{ product.description|linebreaks }}</h3>
+        <div class="sellers">
+            <p>Available artists:
+                <ul class="sellers-list d-flex gap-3">
+                    {% for product_seller in available_sellers %}
+                    {% comment %} what does data size do {% endcomment %}
+                        <li class="seller-name d-flex justify-content-center align-items-center" data-size="{{ product_seller.seller.name }}">
+                            {{ product_seller.seller.name }}
+                        </li>
+                    {% empty %}
+                        <li class="d-flex justify-content-center align-items-center">No available artists</li>
+                    {% endfor %}
+                </ul>
+            </p>
+        </div>
+        
+
+        {% if product.price != product.current_price %}
+            <div class="cart-discount d-flex gap-2">
+                <p class="detail-price line">${{ product.price }}</p>
+                {% comment %} is float format necessary here {% endcomment %}
+                <p class="detail-price price">${{ product.current_price|floatformat:2 }}</p>
+            </div>
+        {% else %}
+            <p class="detail-price">
+                ${{ product.current_price }}
+            </p>
+        {% endif %}
+
+
+        <div class="detail-cart-form">
+            {% comment %} <form action="{% url 'cart:cart_add%' product.id' %}" method="POST"> {% endcomment %}
+            <form action="{% url 'cart:cart_add' product.id %}" method="post">
+                {% csrf_token %}
+                <div class="select-seller d-flex gap-2" d-flex gap-2>
+                    <label for="seller">Artist:</label>
+                    <div id="seller-display">
+                        unselected
+                    </div>
+                </div>
+                <input type="hidden" name="seller" id="seller" required>
+                <button type="submit" class="default-btn mt-3">Book Appointment</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const sellerItems = document.querySelectorAll('.seller-name');
+        const sellerDisplay = document.getElementById('seller-display');
+        const sellerInput = document.getElementById('seller');
+
+        sellerItems.forEach(item => {
+            item.addEventListener('click', () => {
+                sellerInput.value = item.getAttribute('data-size');
+                sellerDisplay.textContent = item.getAttribute('data-size');
+                sellerItems.forEach(i => i.classList.remove('detail-selected'));
+                item.classList.add('detail-selected');
+            });
+        });
+
+        const images = document.querySelectorAll('.detail-image');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+
+        let currentIndex = 0;
+
+        
+        if (images.length > 0) {
+            images[currentIndex].style.display = 'block';
+
+            if (images.length === 1) {
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            } else {
+                prevBtn.addEventListener('click', () => {
+                    images[currentIndex].style.display = 'none';
+                    currentIndex = (currentIndex - 1 + images.length) % images.length;
+                    images[currentIndex].style.display = 'block';
+                });
+    
+                // dont get this logic
+                nextBtn.addEventListener('click', () => {
+                    images[currentIndex].style.display = 'none';
+                    currentIndex = (currentIndex + 1) % images.length;
+                    images[currentIndex].style.display = 'block';
+                });
+            }
+        }
+
+    </script>
+</div>
+{% endblock %}
