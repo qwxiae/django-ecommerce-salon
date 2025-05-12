@@ -1,14 +1,14 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
-from .models import Product, Category, Discount, Specialist, ProductSpecialist
+from .models import Procedure, Category, Discount, Specialist, ProcedureSpecialist
 from django.db.models import Min, Max
 
 
 class CatalogView(ListView):
-    model = Product
-    template_name = "main/product/list.html"
-    # Name of the variable to be used in the template for the list of products
-    context_object_name = "products"
+    model = Procedure
+    template_name = "main/procedure/list.html"
+    # Name of the variable to be used in the template for the list of procedures
+    context_object_name = "procedures"
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -23,8 +23,8 @@ class CatalogView(ListView):
         # filter using query parameters
         if specialist_names:
             # filter using the intermediate model's name
-            # django creates the property productspecialist automatically
-            queryset = queryset.filter(productspecialist__specialist__name__in=specialist_names).distinct()
+            # django creates the property procedurespecialist automatically
+            queryset = queryset.filter(procedurespecialist__specialist__name__in=specialist_names).distinct()
 
         if category_slugs:
             queryset = queryset.filter(category__slug__in=category_slugs)
@@ -32,18 +32,18 @@ class CatalogView(ListView):
         if discount_slugs:
             discounts = Discount.objects.filter(slug__in=discount_slugs, is_active=True)
 
-            # Gather products directly linked to discounts
-            direct_product_ids = Product.objects.filter(
+            # Gather procedures directly linked to discounts
+            direct_procedure_ids = Procedure.objects.filter(
                 discount__in=discounts
             ).values_list("id", flat=True)
 
-            # Gather products from discounted categories
+            # Gather procedures from discounted categories
             category_ids = discounts.values_list("categories", flat=True)
-            category_product_ids = Product.objects.filter(
+            category_procedure_ids = Procedure.objects.filter(
                 category_id__in=category_ids
             ).values_list("id", flat=True)
 
-            all_discounted_ids = set(direct_product_ids) | set(category_product_ids)
+            all_discounted_ids = set(direct_procedure_ids) | set(category_procedure_ids)
 
             queryset = queryset.filter(id__in=all_discounted_ids)
 
@@ -74,15 +74,15 @@ class CatalogView(ListView):
         context["selected_specialists"] = self.request.GET.getlist("specialist")
         context["min_price"] = self.request.GET.get("min_price", "")
         context["max_price"] = self.request.GET.get("max_price", "")
-        # context["lowest_price"] = Product.objects.aggregate(Min("price"))["price__min"] or 0
-        # context["highest_price"] = Product.objects.aggregate(Max("price"))["price__max"] or 0
+        # context["lowest_price"] = Procedure.objects.aggregate(Min("price"))["price__min"] or 0
+        # context["highest_price"] = Procedure.objects.aggregate(Max("price"))["price__max"] or 0
         return context
 
 
-class ProductDetailView(DetailView):
-    model = Product
-    template_name = "main/product/detail.html"
-    context_object_name = "product"
+class ProcedureDetailView(DetailView):
+    model = Procedure
+    template_name = "main/procedure/detail.html"
+    context_object_name = "procedure"
     # Name of the field that has SlugField
     slug_field = "slug"
     # <slug:slug>
@@ -90,9 +90,9 @@ class ProductDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        product = self.object
-        available_specialists = ProductSpecialist.objects.filter(
-            product=product)
+        procedure = self.object
+        available_specialists = ProcedureSpecialist.objects.filter(
+            procedure=procedure)
         context['available_specialists'] = available_specialists
         return context
 

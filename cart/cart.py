@@ -1,5 +1,5 @@
 from django.conf import settings
-from main.models import Product
+from main.models import Procedure
 
 
 class Cart:
@@ -13,8 +13,8 @@ class Cart:
         self.cart = cart
 
     
-    def add(self, product, specialist, quantity=1):
-        item_id = str(product.id)
+    def add(self, procedure, specialist, quantity=1):
+        item_id = str(procedure.id)
         if item_id not in self.cart:
             self.cart[item_id] = {"quantity": 0, "specialist": specialist}
         self.cart[item_id]["quantity"] = quantity
@@ -24,8 +24,8 @@ class Cart:
         self.session[settings.CART_SESSION_ID] = self.cart
         self.session.modified = True
 
-    def remove(self, product):
-        item_id = str(product.id)
+    def remove(self, procedure):
+        item_id = str(procedure.id)
         if item_id in self.cart:
             del self.cart[item_id]
             self.save()
@@ -34,9 +34,9 @@ class Cart:
         total = 0
         for item_id, item_date in self.cart.items():
             try:
-                product = Product.objects.get(id=item_id)
-                total += product.current_price * item_date["quantity"]
-            except Product.DoesNotExist:
+                procedure = Procedure.objects.get(id=item_id)
+                total += procedure.current_price * item_date["quantity"]
+            except Procedure.DoesNotExist:
                 continue
         return total
 
@@ -46,7 +46,7 @@ class Cart:
 
     def __iter__(self):
         item_ids = self.cart.keys()
-        items = Product.objects.filter(id__in=item_ids)
+        items = Procedure.objects.filter(id__in=item_ids)
         for item in items:
             total_price = item.current_price
             quantity = self.cart[str(item.id)]["quantity"]

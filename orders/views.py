@@ -25,11 +25,7 @@ def order_create(request):
                 first_name=form.cleaned_data.get('first_name'),
                 last_name=form.cleaned_data.get('last_name'),
                 middle_name=form.cleaned_data.get('middle_name'),
-                city=form.cleaned_data.get('city'),
-                street=form.cleaned_data.get('street'),
-                house_number=form.cleaned_data.get('house_number'),
-                apartment_number=form.cleaned_data.get('apartment_number'),
-                postal_code=form.cleaned_data.get('postal_code'),
+                phone_number=form.cleaned_data.get('phone_number'),
             )
             order.save()
 
@@ -37,7 +33,7 @@ def order_create(request):
                 specialist_instance = Specialist.objects.get(name=item['specialist'])
                 OrderItem.objects.create(
                     order=order,
-                    product=item['item'],
+                    procedure=item['item'],
                     specialist=specialist_instance,
                     quantity=item['quantity'],
                     total_price=item['total_price'],
@@ -50,7 +46,7 @@ def order_create(request):
                         {
                             'price_data': {
                                 'currency': 'usd',
-                                'product_data': {
+                                'procedure_data': {
                                     'name': item['item'].name,
                                 },
                                 'unit_amount': int(item['total_price'] * 100),
@@ -75,11 +71,7 @@ def order_create(request):
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
         'middle_name': request.user.middle_name,
-        'city': request.user.city,
-        'street': request.user.street,
-        'house_number': request.user.house_number,
-        'apartment_number': request.user.apartment_number,
-        'postal_code': request.user.postal_code,
+        'phone_number': request.user.phone_number,
     })
 
     return render(request, 'orders/order_form.html', {

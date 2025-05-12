@@ -1,33 +1,32 @@
 from django.contrib import admin
-from .models import Product, Category, Discount, \
-    ProductImage, Specialist, ProductSpecialist
+from .models import Procedure, Category, Discount, \
+    ProcedureImage, Specialist, ProcedureSpecialist
 
 
-class ProductImageInline(admin.TabularInline):
-    model = ProductImage
+class ProcedureImageInline(admin.TabularInline):
+    model = ProcedureImage
     extra = 3
 
 
-class ProductSpecialistInline(admin.TabularInline):
-    model = ProductSpecialist
+class ProcedureSpecialistInline(admin.TabularInline):
+    model = ProcedureSpecialist
     extra = 3
 
 
 @admin.register(Specialist)
 class SpecialistAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'description', 'image')
     search_fields = ('name',)
 
 
-@admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+@admin.register(Procedure)
+class ProcedureAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "slug",
         "description",
         "price",
         "category",
-        "stock",
         "is_available",
         "created_at",
         "updated_at",
@@ -35,12 +34,12 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ("is_available", "category")
     prepopulated_fields = {"slug": ("name",)}
     ordering = ("-created_at",)
-    inlines = [ProductImageInline, ProductSpecialistInline]
+    inlines = [ProcedureImageInline, ProcedureSpecialistInline]
 
 
 @admin.register(Discount)
 class DiscountAdmin(admin.ModelAdmin):
-    # Category and product are passed into list_display by default
+    # Category and procedure are passed into list_display by default
     list_display = (
         "name",
         "slug",

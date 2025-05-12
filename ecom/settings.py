@@ -85,6 +85,7 @@ WSGI_APPLICATION = 'ecom.wsgi.application'
 # add host and port later
 DATABASES = {
     'default': {
+
         'ENGINE': 'django.db.backends.postgresql',
         'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
         'PORT': os.getenv('POSTGRES_PORT', '5432'),

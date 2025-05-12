@@ -14,12 +14,6 @@ class UserRegistrationForm(UserCreationForm):
         if password1 and len(password1) < 8:
             self.add_error("password1", "Minimum 8 characters.")
         return password1
-    
-    # def clean_password2(self):
-    #     password1 = self.cleaned_data.get('password1')
-    #     password2 = self.cleaned_data.get('password2')
-
-    #     return password2
 
 
 
@@ -47,9 +41,5 @@ class UserProfileForm(forms.ModelForm):
             "first_name",
             "last_name",
             "middle_name",
-            "city",
-            "street",
-            "house_number",
-            "apartment_number",
-            "postal_code",
+            "phone_number",
         ]

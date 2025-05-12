@@ -1,20 +1,20 @@
 {% extends "main/base.html" %}
 {% block title %}
-Salon — {{ product.name }}
+Salon — {{ procedure.name }}
 {% endblock title %}
 
 {% block content %}
-<div class="detail-product d-flex">
+<div class="detail-procedure d-flex">
     <div class="detail-img d-flex justify-content-center">
         <div class="image-box">
-            <!-- Main Product Image -->
-            {% if product.image %}
-                <img class="detail-image" style="display: block;" data-index="0" src="{{ product.image.url }}" alt="{{ product.name }}">
+            <!-- Main Procedure Image -->
+            {% if procedure.image %}
+                <img class="detail-image" style="display: block;" data-index="0" src="{{ procedure.image.url }}" alt="{{ procedure.name }}">
             {% endif %}
 
-            <!-- Additional Product Images -->
-            {% for image in product.product_image.all %}
-                <img class="detail-image" style="display: none;" data-index="{{ forloop.counter0|add:1 }}" src="{{ image.image.url }}" alt="{{ product.name }}">
+            <!-- Additional Procedure Images -->
+            {% for image in procedure.procedure_image.all %}
+                <img class="detail-image" style="display: none;" data-index="{{ forloop.counter0|add:1 }}" src="{{ image.image.url }}" alt="{{ procedure.name }}">
             {% endfor %}
 
             <div class="image-nav">
@@ -26,16 +26,16 @@ Salon — {{ product.name }}
 
 
     <div class="detail-description">
-        <h2 class="text-uppercase product-title">{{ product.name }}</h2>
+        <h2 class="text-uppercase procedure-title">{{ procedure.name }}</h2>
         {% comment %} what does linebreaks mean {% endcomment %}
-        <h3 class="item-description">{{ product.description|linebreaks }}</h3>
+        <h3 class="item-description">{{ procedure.description|linebreaks }}</h3>
         <div class="specialists">
             <p>Available artists:
                 <ul class="specialists-list d-flex gap-3">
-                    {% for product_specialist in available_specialists %}
+                    {% for procedure_specialist in available_specialists %}
                     {% comment %} what does data size do {% endcomment %}
-                        <li class="specialist-name d-flex justify-content-center align-items-center" data-size="{{ product_specialist.specialist.name }}">
-                            {{ product_specialist.specialist.name }}
+                        <li class="specialist-name d-flex justify-content-center align-items-center" data-size="{{ procedure_specialist.specialist.name }}">
+                            {{ procedure_specialist.specialist.name }}
                         </li>
                     {% empty %}
                         <li class="d-flex justify-content-center align-items-center">No available artists</li>
@@ -45,22 +45,22 @@ Salon — {{ product.name }}
         </div>
         
 
-        {% if product.price != product.current_price %}
+        {% if procedure.price != procedure.current_price %}
             <div class="cart-discount d-flex gap-2">
-                <p class="detail-price line">${{ product.price }}</p>
+                <p class="detail-price line">${{ procedure.price }}</p>
                 {% comment %} is float format necessary here {% endcomment %}
-                <p class="detail-price price">${{ product.current_price|floatformat:2 }}</p>
+                <p class="detail-price price">${{ procedure.current_price|floatformat:2 }}</p>
             </div>
         {% else %}
             <p class="detail-price">
-                ${{ product.current_price }}
+                ${{ procedure.current_price }}
             </p>
         {% endif %}
 
 
         <div class="detail-cart-form">
-            {% comment %} <form action="{% url 'cart:cart_add%' product.id' %}" method="POST"> {% endcomment %}
-            <form action="{% url 'cart:cart_add' product.id %}" method="post">
+            {% comment %} <form action="{% url 'cart:cart_add%' procedure.id' %}" method="POST"> {% endcomment %}
+            <form action="{% url 'cart:cart_add' procedure.id %}" method="post">
                 {% csrf_token %}
                 <div class="select-specialist d-flex gap-2" d-flex gap-2>
                     <label for="specialist">Artist:</label>

@@ -6,6 +6,8 @@ from django.core.validators import MinValueValidator
 
 class Specialist(models.Model):
     name = models.CharField(max_length=10, unique=True)
+    image = models.ImageField(upload_to="media/procedure/Y/%m/%d", blank=True)
+    description = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
@@ -14,6 +16,7 @@ class Specialist(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(unique=True)
+    description = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
@@ -34,7 +37,7 @@ class Discount(models.Model):
     percentage = models.DecimalField(max_digits=5, decimal_places=2)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    products = models.ManyToManyField("Product", blank=True)
+    procedures = models.ManyToManyField("Procedure", blank=True)
     categories = models.ManyToManyField("Category", blank=True)
     is_active = models.BooleanField(default=False)
 
@@ -46,12 +49,12 @@ class Discount(models.Model):
         super().save(*args, **kwargs)
 
 
-class Product(models.Model):
+class Procedure(models.Model):
     name = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(unique=True)
     specialist = models.ManyToManyField(
-        Specialist, through="ProductSpecialist",
-        related_name="product",
+        Specialist, through="ProcedureSpecialist",
+        related_name="procedure",
         blank=True
     )
     # Textfield is longer and unbounded
@@ -61,10 +64,9 @@ class Product(models.Model):
         max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal("0.00"))]
     )
     category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, related_name="product"
+        Category, on_delete=models.CASCADE, related_name="procedure"
     )
-    image = models.ImageField(upload_to="media/product/Y/%m/%d", blank=True)
-    stock = models.PositiveIntegerField(default=0)
+    image = models.ImageField(upload_to="media/procedure/Y/%m/%d", blank=True)
     is_available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
@@ -81,7 +83,7 @@ class Product(models.Model):
 
         discounts = Discount.objects.filter(
             start_date__lte=now, end_date__gte=now
-        ).filter(models.Q(products=self) | models.Q(categories=self.category))
+        ).filter(models.Q(procedures=self) | models.Q(categories=self.category))
 
         if discounts.exists():
             for discount in discounts:
@@ -93,20 +95,20 @@ class Product(models.Model):
         return price.quantize(Decimal("0.01"))
 
 
-class ProductImage(models.Model):
-    product = models.ForeignKey(
-        Product, related_name="product_image", on_delete=models.CASCADE
+class ProcedureImage(models.Model):
+    procedure = models.ForeignKey(
+        Procedure, related_name="procedure_image", on_delete=models.CASCADE
     )
-    image = models.ImageField(upload_to="media/product/Y/%m/%d", blank=True)
+    image = models.ImageField(upload_to="media/procedure/Y/%m/%d", blank=True)
 
     def __str__(self):
-        return f"{self.product.name} - {self.image.name}"
+        return f"{self.procedure.name} - {self.image.name}"
 
 
-class ProductSpecialist(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+class ProcedureSpecialist(models.Model):
+    procedure = models.ForeignKey(Procedure, on_delete=models.CASCADE)
     specialist = models.ForeignKey(Specialist, on_delete=models.CASCADE)
 
     class Meta:
         # todo: do not allow them to repeat specialists
-        unique_together = ("product", "specialist")
+        unique_together = ("procedure", "specialist")

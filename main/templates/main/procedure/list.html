@@ -67,27 +67,27 @@
         {% endfor %}
     </form>
 
-    <div class="product-list">
+    <div class="procedure-list">
         <div class="card-container d-flex flex-wrap">
-            {% for product in products %}
+            {% for procedure in procedures %}
             <div class="card">
-                <a href="{% url 'main:product_detail' product.slug %}" class="card-on-catalog">
-                    {% if product.image %}
-                        <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+                <a href="{% url 'main:procedure_detail' procedure.slug %}" class="card-on-catalog">
+                    {% if procedure.image %}
+                        <img class="procedure-image" src="{{ procedure.image.url }}" alt="{{ procedure.name }}">
                     {% endif %}
                     <div class="card-info">
-                        <h5>{{ product.name }}</h5>
-                        {% comment %} <p>{{ product.current_price  }}$</p> {% endcomment %}
+                        <h5>{{ procedure.name }}</h5>
+                        {% comment %} <p>{{ procedure.current_price  }}$</p> {% endcomment %}
 
                         {% comment %} NEW PRICE {% endcomment %}
-                        {% if product.current_price != product.price %}
+                        {% if procedure.current_price != procedure.price %}
                         <div class="cart-discount d-flex gap-2">
-                            <p class="detail-price line">${{ product.price }}</p>
-                            <p class="detail-price price">${{ product.current_price }}</p>
+                            <p class="detail-price line">${{ procedure.price }}</p>
+                            <p class="detail-price price">${{ procedure.current_price }}</p>
                         </div>
                         {% else %}
                             <p class="detail-price">
-                                ${{ product.current_price }}
+                                ${{ procedure.current_price }}
                             </p>
                         {% endif %}
 

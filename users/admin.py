@@ -18,11 +18,7 @@ class UserAdmin(admin.ModelAdmin):
                     "first_name",
                     "last_name",
                     "middle_name",
-                    "city",
-                    "street",
-                    "house_number",
-                    "apartment_number",
-                    "postal_code",
+                    "phone_number",
                 )
             },
         ),
